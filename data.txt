@@ -1,3 +1,4 @@
-{'name': 'd', 'password': '4', 'products': {}}
-{'name': 'a', 'password': '1', 'products': {'aa': 10, 'aaa': 100}}
-{'name': 'ehsan', 'password': '33', 'products': {'ehsan pr': 22}}
+{'name': 'ali', 'password': '111', 'products': {'ali pr 1 ': 10}}
+{'name': 'ehsan', 'password': '0912', 'products': {'ehsan pr 1': 120000, 'ehsan pr 2': 1111111}}
+{'name': 'mamad', 'password': '666', 'products': {'mamad 1': 43, 'eheh': 68}}
+{'name': 'tmp', 'password': '100', 'products': {}}
