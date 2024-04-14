@@ -1,2 +1,9 @@
-# command store manage
- a simple store management command system
+
+# online store by commands
+
+This simple project is a simple and cute system to manage an online store.
+
+## Authors
+
+- [@octokatherine](https://github.com/Ehsan-004)
+

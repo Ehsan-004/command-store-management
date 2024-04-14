@@ -13,8 +13,9 @@ also wishlist and ...
 let'ls start:
 '''
 # from sys import getsizeof as sizeof
-from json import loads, load
+from json import loads
 from os import system
+from pprint import pprint
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 class Customer:
     counter = 0
@@ -36,8 +37,11 @@ class Customer:
         det = {
             'name': self.Name,
             'password': self.Pass,
+            'products': {}
         }
         return det
+    # ------------------------------------------------------------------------------
+    
     # ------------------------------------------------------------------------------
     def clear(self):
         self.__init__(False)
@@ -87,6 +91,24 @@ class command:
                 print("register first")
         return tmp_user
     # ------------------------------------------------------------------------------
+    def add_product(self, cmd ):
+        if search_data(cmd[1], cmd[2]) == None:
+            print(f"user {cmd[1]} not found , register first")
+            return None
+            commander()
+        data = {}
+        product_name = input("   name of product:")
+        while True:
+            try:
+                product_price = int(input("   enter price of product:"))
+                break
+            except:
+                print("    wrong amount")
+
+        data[product_name] = product_price # TODO the key can be name and the value a list with amount like a date or ...
+        add_product_to_sell(cmd[1], cmd[2], **data)
+        print(f"product {product_name} added")
+    # ------------------------------------------------------------------------------
     def delete(self, cmd):
         delete_data(cmd[2], cmd[3])
     # ------------------------------------------------------------------------------
@@ -94,30 +116,40 @@ class command:
         print("%-15s %-20s"%("register", "reg <name> <password> [s]"))
         print(15*" ", "<s> to save the user")
         print("%-15s %-20s"%("user details", "show <name> <password>"))
+        print("%-15s %-20s"%("new product", "add <name> <password>"))
         print("%-15s %-20s"%("help", "help"))
         print("%-15s %-20s"%("exit", "exit"))
     # ------------------------------------------------------------------------------
     def admin_help(self):
         print("%-15s %-20s"%("user details", "show <name>"))
         print("%-15s %-20s"%("all suers", "showall"))
+        print("%-15s %-20s"%("delete user", "del <name> <password>"))
         print("%-15s %-20s"%("register", "reg <name> <password> [s]"))
+# functions
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-def save_data(json_data):
+def save_data(json_data, delete=False):
+    if delete:
+        # this part will delete the content of file if need
+        with open("data.txt", 'w', encoding="utf-8") as file:
+            pass
+
     data = str(json_data)+'\n'
-    with open("c:\\Users\\SADAF COMPUTER\\Desktop\\data.txt", 'a', encoding="utf-8") as file:
+    
+    with open("data.txt", 'a', encoding="utf-8") as file:
         file.write(data)
         return True
+
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 def search_data(name, password):
-    with open("c:\\Users\\SADAF COMPUTER\\Desktop\\data.txt", 'r', encoding="utf-8") as file:
+    with open("data.txt", 'r', encoding="utf-8") as file:
         for line in file.readlines():
             if name in line and password in line:
                 return line
         return None
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 def all_data():
-    with open("c:\\Users\\SADAF COMPUTER\\Desktop\\data.txt", 'r', encoding="utf-8") as file:
+    with open("data.txt", 'r', encoding="utf-8") as file:
         for line in file.readlines():
             try:      
                 show_data(line)
@@ -130,22 +162,66 @@ def show_data(detilas):
     detilas = loads(detilas.replace("\'", "\""))
     print(f"neme : {detilas['name']}")
     print(f"password : {detilas['password']}")
+    if detilas['products'] != {}:
+        print(f"products : {detilas['products']}")
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 def delete_data(name, password):
-    character_counter = 0
-    print("I am deleting")
-    with open("c:\\Users\\SADAF COMPUTER\\Desktop\\data.txt", 'r+', encoding="utf-8") as file:
+    # ----------------------------------------------------
+    with open("data.txt", 'r', encoding="utf-8") as file:
+        all_data = file.read()
+
+     # it will split each data as a list member
+     # it also delete the last element of list that is a \n
+    all_data = all_data.split("\n")
+    all_data.pop()
+
+    # the part to remove the data wanted
+    found = False
+    for data in all_data:
+        if name in data and password in data:
+            print(f"data was found\n   name : {name}\n   password : {password}")
+            all_data.remove(data)
+            found = True
+
+    if found == False:
+        print(f"user {name} was not found to delete")
+        return None
+        commander()
+
+    for data in all_data:
+        try:
+            if all_data.index(data) == 0:
+                delete = True
+            else:
+                delete = False
+            data.replace('\'','"')
+            save_data(data, delete)
+        except ValueError:
+            print("wrong values")
+            save_data("")
+    # ----------------------------------------------------
+    # character_counter = 0
+    # with open("data.txt", 'r+', encoding="utf-8") as file:
+    #     for line in file.readlines():
+    #         if name in line and password in line:
+    #             print(character_counter)
+    #             file.seek(character_counter, 0)
+    #             for __ in line:
+    #                 file.write(" ")
+    #         for _ in line:
+    #             character_counter += 1
+# @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+def add_product_to_sell(name, password, **pr_detail):
+    with open("data.txt", 'r+', encoding="utf-8") as file:
         for line in file.readlines():
-            print(repr(line))
-            print(f"for this line chars are {character_counter}")
             if name in line and password in line:
-                print(character_counter)
-                file.seek(character_counter, 0)
-                for __ in line:
-                    file.write(" ")
-            for _ in line:
-                character_counter += 1
-    print("deleting is finished")
+                data = line
+    data = loads(data.replace("\'", '"'))
+    # TODO adding the pr details wich is a dictionary as a key to the previous value of the products
+    data['products'].update(pr_detail)
+    delete_data(name, password)
+    save_data(data)
+
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 def commander():
     tmp_user = Customer()
@@ -164,6 +240,9 @@ def commander():
             elif "save" in cmd: # <save> <name> <password>
                 tmp_user = cm.save(cmd, tmp_user)
             # ------------------------------------------------------------------------------
+            elif "add" in cmd: # <add> <name> <password>
+                cm.add_product(cmd)
+            # ------------------------------------------------------------------------------
             elif "help" in cmd:
                 cm.help()     
             # ------------------------------------------------------------------------------
@@ -179,13 +258,14 @@ def commander():
                 cm.show_all()
             # ------------------------------------------------------------------------------
             elif cmd[1] == "show": # <show> <name>
-               tmp_user = cm.admin_reg(cmd) 
+               tmp_user = cm.admin_show(cmd) 
             # ------------------------------------------------------------------------------       
             elif cmd[1] == "reg":
                tmp_user = cm.admin_reg(cmd) 
             # ------------------------------------------------------------------------------       
             elif cmd[1] == "del":
                 cm.delete(cmd)
+                print("done")
             # ------------------------------------------------------------------------------       
             elif cmd[1] == "help":
                 cm.admin_help()

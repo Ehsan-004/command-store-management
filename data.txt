@@ -1,0 +1,3 @@
+{'name': 'd', 'password': '4', 'products': {}}
+{'name': 'a', 'password': '1', 'products': {'aa': 10, 'aaa': 100}}
+{'name': 'ehsan', 'password': '33', 'products': {'ehsan pr': 22}}
